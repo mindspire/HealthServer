@@ -7,12 +7,12 @@ var bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-var nano = require('nano')('http://saad:1234@localhost:5984');
-nano.db.create('voicereadings');
+var nano = require('nano')('http://localhost:5984');
+// nano.db.create('voicereadings');
 const voicedb = nano.db.use('voicereadings');
-nano.db.create('notes');
+// nano.db.create('notes');
 const notesdb = nano.db.use('notes');
-nano.db.create('analysis');
+// nano.db.create('analysis');
 const analysisdb = nano.db.use('analysis');
 
 const port = 3000;
@@ -64,18 +64,17 @@ app.post('/submitnotes', (req, res) => {
 })
 
 app.post('/uploadAnalysis', (req, res) => {
-    var analysis = req.body.analysis;
-
+    var analysis = req.body;
     console.log(analysis);
 
     // Insert the readings in the mental database
-    analysis.insert({ analysis: analysis }, null, function (err, body) {
+    notesdb.insert({ analysis: analysis }, null, function (err, body) {
         if (err) {
             console.log(err)
             res.send(err.toString());
         } else {
             console.log(body)
-            res.send(analysis.toString());
+            res.send(analysis);
         }
     })
 })
